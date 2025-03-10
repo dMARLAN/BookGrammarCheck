@@ -1,15 +1,17 @@
+import shutil
 from typing import Final
 
 from language_tool_python import LanguageTool as LanguageTool_, Match
-from questionary import select, text
+from questionary import select, text, Choice
 
 from clients.language_tool.constants import (
     QUESTIONARY_STYLE,
     SKIP_OPTION_NAME,
     CUSTOM_OPTION_NAME,
     DEFAULT_LANGUAGE,
-    AUTO_SKIPPED_RULES,
-    AUTO_ACCEPTED_RULES, AUTO_ACCEPTED_RULE_GROUPS,
+    DISABLED_RULES,
+    AUTO_ACCEPTED_RULES,
+    AUTO_ACCEPTED_RULE_GROUPS,
 )
 from core.types import Color, Lines
 from utilities import print_color
@@ -18,7 +20,7 @@ from utilities import print_color
 class LanguageToolClient:
     __LANGUAGE_TOOL: Final[LanguageTool_] = LanguageTool_(DEFAULT_LANGUAGE)
     __LANGUAGE_TOOL.disable_spellchecking()
-    __LANGUAGE_TOOL.disabled_rules.add("ENGLISH_WORD_REPEAT_BEGINNING_RULE")
+    __LANGUAGE_TOOL.disabled_rules.update(DISABLED_RULES)
 
     @staticmethod
     def __get_choice(match: Match, lines: Lines, offset_correction: int) -> str:
@@ -31,17 +33,28 @@ class LanguageToolClient:
             + lines.line[corrected_offset + match.errorLength:]
         )
 
-        print("\nCONTEXT:")
+        terminal_width = shutil.get_terminal_size().columns
+
+        print_color("\n*** CONTEXT " + "*" * (terminal_width - 12), Color.CYAN)
         if lines.prev_line:
             print_color(lines.prev_line, Color.BRIGHT_BLACK)
 
         print("> " + highlighted_line)
         if lines.next_line:
             print_color(lines.next_line, Color.BRIGHT_BLACK)
+        print_color("\n" + "*" * shutil.get_terminal_size().columns, Color.CYAN)
+
+        replacements_choices = [
+            Choice(
+                title=replacement.replace(" ", "␣") if replacement else "×Blank",
+                value=replacement,
+            )
+            for replacement in match.replacements
+        ]
 
         chosen = select(
             message="Choose a replacement",
-            choices=[SKIP_OPTION_NAME] + match.replacements + [CUSTOM_OPTION_NAME],
+            choices=[SKIP_OPTION_NAME] + replacements_choices + [CUSTOM_OPTION_NAME],
             instruction=f"\nRule: {match.message}\n{match.category} - {match.ruleId}",
             style=QUESTIONARY_STYLE,
         ).ask()
@@ -63,10 +76,6 @@ class LanguageToolClient:
                 continue
 
             if "gallon" in lines.line and "Possible agreement error" in match.message:
-                print_color(f"Skipped RuleID: {match.ruleId}", Color.BLUE)
-                continue
-
-            if match.ruleId in AUTO_SKIPPED_RULES:
                 print_color(f"Skipped RuleID: {match.ruleId}", Color.BLUE)
                 continue
 
