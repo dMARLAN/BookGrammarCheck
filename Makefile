@@ -1,4 +1,4 @@
-.PHONY: venv dev-install install format lint run
+.PHONY: dev-install install format lint test run
 
 SHELL := "bash"
 ACTIVATE := "." ".venv/Scripts/activate"
@@ -16,7 +16,7 @@ lint: dev-install
 	@bash -c "$(ACTIVATE) && ruff check . && pyright ./src"
 
 test: dev-install
-	@bash -c "$(ACTIVATE) && pytest ./src"
+	@bash -c "$(ACTIVATE) && pytest ./tests"
 
 run: install
 	@bash -c "$(ACTIVATE) && winpty python ./src/main.py"
