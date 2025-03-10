@@ -35,7 +35,6 @@ AUTO_ACCEPTED_RULES: Final[set] = {
     "A_UNCOUNTABLE",
     "OUTSIDE_OF",
     "CONSECUTIVE_SPACES",
-    "NINA",
 }
 AUTO_ACCEPTED_RULE_GROUPS: Final[set] = {
     "_HYPHEN",
