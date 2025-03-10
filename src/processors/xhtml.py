@@ -19,10 +19,14 @@ class XHTMLProcessor:
         output_dir = main_source_files_dir / self.__OUTPUT_DIR_NAME
         output_dir.mkdir(exist_ok=True)
 
-        files_to_process = Directory.difference_file_stems(
-            return_directory=main_source_files_dir,
-            diff_directory=output_dir,
-        ).natural_sort().glob("*.xhtml")
+        files_to_process = (
+            Directory.difference_file_stems(
+                return_directory=main_source_files_dir,
+                diff_directory=output_dir,
+            )
+            .natural_sort()
+            .glob("*.xhtml")
+        )
 
         for file in files_to_process:
             content = file.read_text(encoding="utf-8")

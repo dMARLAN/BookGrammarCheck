@@ -42,17 +42,21 @@ class GrammarProcessor:
 
             fixed_lines = []
             for i, line in enumerate(lines):
-                fixed_lines.append(self.__language_tool.check_lines(Lines(
-                    prev_line=self.__get_prev_non_blank(lines, i) if i > 0 else "",
-                    line=line,
-                    next_line=self.__get_next_non_blank(lines, i) if i < len(lines) - 1 else "",
-                )).line)
+                fixed_lines.append(
+                    self.__language_tool.check_lines(
+                        Lines(
+                            prev_line=self.__get_prev_non_blank(lines, i) if i > 0 else "",
+                            line=line,
+                            next_line=self.__get_next_non_blank(lines, i) if i < len(lines) - 1 else "",
+                        )
+                    ).line
+                )
 
             with (output_dir / file.name).open("w", encoding="utf-8") as out:
                 out.write("\n".join(fixed_lines))
             print(f"Wrote: {file} \n")
 
-            response =questionary.press_any_key_to_continue(
+            response = questionary.press_any_key_to_continue(
                 message=f"Finished processing: {file.name}, press any key to continue..."
             ).ask()
             if response is None:

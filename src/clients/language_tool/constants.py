@@ -2,13 +2,15 @@ from typing import Final
 
 from questionary import Style
 
-QUESTIONARY_STYLE = Style([
-    ("question", "fg:#FFFFFF"),
-    ("instruction", "fg:#ecb25f"),
-    ("pointer", "fg:#FF9D00"),
-    ("selected", "fg:#FF9D00"),
-    ("system-choice", "fg:#DDDDDD"),
-])
+QUESTIONARY_STYLE = Style(
+    [
+        ("question", "fg:#FFFFFF"),
+        ("instruction", "fg:#ecb25f"),
+        ("pointer", "fg:#FF9D00"),
+        ("selected", "fg:#FF9D00"),
+        ("system-choice", "fg:#DDDDDD"),
+    ]
+)
 SKIP_OPTION_NAME: Final[str] = "*Skip"
 CUSTOM_OPTION_NAME: Final[str] = "*Custom"
 

@@ -7,7 +7,7 @@ from utilities import print_color
 
 
 class ChaptersProcessor:
-    __FILE_PATTERN: Final[Pattern] = re.compile(r'^(\d+__)?Chapter_\d+_(.*?)\.txt$')
+    __FILE_PATTERN: Final[Pattern] = re.compile(r"^(\d+__)?Chapter_\d+_(.*?)\.txt$")
     __CHAPTER_HEADER_PATTERN: Final[Pattern] = re.compile(r"^Trash of the Count’s Family\s+–\s+Chapter\s+\d+\s+–.*$")
     __OUTPUT_DIR_NAME: Final[str] = "grouped_chapters"
 
@@ -19,7 +19,7 @@ class ChaptersProcessor:
 
         for file in sorted(self.__source_files_dir.glob("*.txt")):
             if match := self.__FILE_PATTERN.match(file.name):
-                chapter_title = re.sub(r'_\d+$', '', match.group(2)).replace("_", " ")
+                chapter_title = re.sub(r"_\d+$", "", match.group(2)).replace("_", " ")
                 if chapter_title not in groups:
                     groups[chapter_title] = []
                 groups[chapter_title].append(file)

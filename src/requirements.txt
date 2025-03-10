@@ -1,0 +1,2 @@
+questionary~=2.1.0
+language-tool-python~=2.9.0

@@ -24,13 +24,16 @@ class LanguageToolClient:
 
     @staticmethod
     def __get_choice(match: Match, lines: Lines, offset_correction: int) -> str:
+        assert match.offset is not None, "Match offset is None"
+        assert match.errorLength is not None, "Match error length is None"
+
         corrected_offset = match.offset + offset_correction
         highlighted_line = (
             lines.line[:corrected_offset]
             + "\033[91m"
-            + lines.line[corrected_offset: corrected_offset + match.errorLength]
+            + lines.line[corrected_offset : corrected_offset + match.errorLength]
             + "\033[0m"
-            + lines.line[corrected_offset + match.errorLength:]
+            + lines.line[corrected_offset + match.errorLength :]
         )
 
         terminal_width = shutil.get_terminal_size().columns
@@ -68,10 +71,12 @@ class LanguageToolClient:
         offset = 0
 
         for match in self.__LANGUAGE_TOOL.check(lines.line):
-            if (
-                "Add a space between sentences." in match.message
-                and any(["…" in lines.line, "..." in lines.line])
-            ):
+            assert match.offset is not None, "Match offset is None"
+            assert match.errorLength is not None, "Match error length is None"
+            assert match.replacements is not None, "Match replacements are None"
+            assert match.message is not None, "Match message is None"
+
+            if "Add a space between sentences." in match.message and any(["…" in lines.line, "..." in lines.line]):
                 print_color(f"Skipped RuleID: {match.ruleId}", Color.BLUE)
                 continue
 
@@ -79,9 +84,8 @@ class LanguageToolClient:
                 print_color(f"Skipped RuleID: {match.ruleId}", Color.BLUE)
                 continue
 
-            if (
-                match.ruleId in AUTO_ACCEPTED_RULES
-                or any([group in match.ruleId for group in AUTO_ACCEPTED_RULE_GROUPS])
+            if match.ruleId in AUTO_ACCEPTED_RULES or any(
+                [group in match.ruleId for group in AUTO_ACCEPTED_RULE_GROUPS]
             ):
                 print_color(f"Automatically accepted RuleID: {match.ruleId}", Color.GREEN)
                 choice = match.replacements[0]
@@ -99,9 +103,7 @@ class LanguageToolClient:
                 break
 
             lines.line = (
-                lines.line[: match.offset + offset]
-                + choice
-                + lines.line[match.offset + offset + match.errorLength:]
+                lines.line[: match.offset + offset] + choice + lines.line[match.offset + offset + match.errorLength :]
             )
             offset += len(choice) - match.errorLength
 

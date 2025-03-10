@@ -2,7 +2,7 @@ import re
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
-from typing import Iterator, Self
+from typing import Iterator, Self, override
 
 
 class Color(StrEnum):
@@ -43,33 +43,27 @@ class Files:
 
     @staticmethod
     def __sort_natural_key(s: str) -> list:
-        return [int(text_) if text_.isdigit() else text_.lower() for text_ in re.split(r'(\d+)', s)]
+        return [int(text_) if text_.isdigit() else text_.lower() for text_ in re.split(r"(\d+)", s)]
 
     def natural_sort(self) -> Self:
         self.__files = sorted(self.__files, key=lambda file: self.__sort_natural_key(file.name))
         return self
 
     def glob(self, pattern) -> Iterator[File]:
-        yield from (
-            file for file in self.__files if file.match(pattern)
-        )
+        yield from (file for file in self.__files if file.match(pattern))
 
     def __iter__(self):
         return iter(self.__files)
 
 
 class Directory(Path):
-    def glob(self, pattern, *, case_sensitive=None) -> Iterator[File | Self]:
-        yield from (
-            File(file) if file.is_file() else Directory(file)
-            for file in super().glob(pattern)
-        )
+    @override
+    def glob(self, pattern, *, case_sensitive=None) -> Iterator[File | Self]:  # type: ignore
+        yield from (File(file) if file.is_file() else Directory(file) for file in super().glob(pattern))  # type: ignore
 
-    def iterdir(self) -> Iterator[File | Self]:
-        yield from (
-            File(file) if file.is_file() else Directory(file)
-            for file in super().iterdir()
-        )
+    @override
+    def iterdir(self) -> Iterator[File | Self]:  # type: ignore
+        yield from (File(file) if file.is_file() else Directory(file) for file in super().iterdir())  # type: ignore
 
     def files(self) -> list[File]:
         return [File(file) for file in self.iterdir() if file.is_file()]
