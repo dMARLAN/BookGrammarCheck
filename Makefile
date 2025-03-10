@@ -1,16 +1,22 @@
-.PHONY: dev-install install format lint run
+.PHONY: venv dev-install install format lint run
+
+SHELL := "bash"
+ACTIVATE := "." ".venv/Scripts/activate"
 
 dev-install:
-	pip install -r ./src/dev-requirements.txt
+	@bash -c "$(ACTIVATE) && pip install -qqqr ./src/dev-requirements.txt"
 
 install:
-	pip install -r ./src/requirements.txt
+	@bash -c "$(ACTIVATE) && pip install -qqqr ./src/requirements.txt"
 
 format: dev-install
-	black --line-length=120 ./src
+	@bash -c "$(ACTIVATE) && black --line-length=120 ./src"
 
 lint: dev-install
-	ruff check . && pyright ./src
+	@bash -c "$(ACTIVATE) && ruff check . && pyright ./src"
+
+test: dev-install
+	@bash -c "$(ACTIVATE) && pytest ./src"
 
 run: install
-	winpty python ./src/main.py
+	@bash -c "$(ACTIVATE) && winpty python ./src/main.py"
