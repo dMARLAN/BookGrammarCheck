@@ -1,3 +1,5 @@
+import questionary
+
 from core.constants import SOURCE_DIR
 from core.types import Color
 from processors import XHTMLProcessor, ChaptersProcessor, GrammarProcessor

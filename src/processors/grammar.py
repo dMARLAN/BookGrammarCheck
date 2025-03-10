@@ -52,8 +52,10 @@ class GrammarProcessor:
                 out.write("\n".join(fixed_lines))
             print(f"Wrote: {file} \n")
 
-            questionary.press_any_key_to_continue(
+            response =questionary.press_any_key_to_continue(
                 message=f"Finished processing: {file.name}, press any key to continue..."
             ).ask()
+            if response is None:
+                exit(0)
 
         return output_dir
