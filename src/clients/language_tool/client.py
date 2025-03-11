@@ -39,12 +39,14 @@ class LanguageToolClient:
         terminal_width = shutil.get_terminal_size().columns
 
         print_color("\n*** CONTEXT " + "*" * (terminal_width - 12), Color.CYAN)
-        if lines.prev_line:
-            print_color(lines.prev_line, Color.BRIGHT_BLACK)
+        for i, prev_line in enumerate(lines.prev_lines):
+            label = f"-{len(lines.prev_lines) - i}: "
+            print_color(label + prev_line, Color.BRIGHT_BLACK)
 
-        print("> " + highlighted_line)
-        if lines.next_line:
-            print_color(lines.next_line, Color.BRIGHT_BLACK)
+        print(" 0: " + highlighted_line)
+        for i, next_line in enumerate(lines.next_lines, start=1):
+            label = f"+{i}: "
+            print_color(label + next_line, Color.BRIGHT_BLACK)
         print_color("\n" + "*" * shutil.get_terminal_size().columns, Color.CYAN)
 
         replacements_choices = [

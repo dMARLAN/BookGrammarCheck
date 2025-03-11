@@ -27,9 +27,9 @@ class Color(StrEnum):
 
 @dataclass
 class Lines:
-    prev_line: str | None
+    prev_lines: list[str]
     line: str
-    next_line: str | None
+    next_lines: list[str]
 
 
 class File(Path):

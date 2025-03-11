@@ -14,18 +14,24 @@ class GrammarProcessor:
         self.__language_tool = LanguageToolClient()
 
     @staticmethod
-    def __get_prev_non_blank(lines, index):
+    def __get_prev_non_blank(lines, index, count=2):
+        result = []
         for j in range(index - 1, -1, -1):
             if lines[j].strip():
-                return lines[j]
-        return ""
+                result.append(lines[j])
+                if len(result) == count:
+                    break
+        return result[::-1]
 
     @staticmethod
-    def __get_next_non_blank(lines, index):
+    def __get_next_non_blank(lines, index, count=2):
+        result = []
         for j in range(index + 1, len(lines)):
             if lines[j].strip():
-                return lines[j]
-        return ""
+                result.append(lines[j])
+                if len(result) == count:
+                    break
+        return result
 
     def process(self) -> Directory:
         output_dir = self.__source_directory / self.__OUTPUT_DIR_NAME
@@ -45,9 +51,9 @@ class GrammarProcessor:
                 fixed_lines.append(
                     self.__language_tool.check_lines(
                         Lines(
-                            prev_line=self.__get_prev_non_blank(lines, i) if i > 0 else "",
+                            prev_lines=self.__get_prev_non_blank(lines, i, count=3) if i > 0 else [],
                             line=line,
-                            next_line=self.__get_next_non_blank(lines, i) if i < len(lines) - 1 else "",
+                            next_lines=self.__get_next_non_blank(lines, i, count=3) if i < len(lines) - 1 else [],
                         )
                     ).line
                 )
