@@ -7,7 +7,7 @@ from utilities import print_color
 
 
 class ChaptersProcessor:
-    __FILE_PATTERN: Final[Pattern] = re.compile(r"^(\d+__)?Chapter_\d+_(.*?)\.txt$")
+    __FILE_PATTERN: Final[Pattern] = re.compile(r"^(\d+_+)?Chapter_\d+_(.*?)\.txt$")
     __CHAPTER_HEADER_PATTERN: Final[Pattern] = re.compile(r"^Trash of the Count’s Family\s+–\s+Chapter\s+\d+\s+–.*$")
     __OUTPUT_DIR_NAME: Final[str] = "grouped_chapters"
 
